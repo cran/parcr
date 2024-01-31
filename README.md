@@ -2,6 +2,8 @@
 <!-- README.md is generated from README.Rmd. Edit README.Rmd -->
 <!-- badges: start -->
 
+[![CRAN
+status](https://www.r-pkg.org/badges/version/parcr)](https://cran.r-project.org/package=parcr)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![R-CMD-check](https://github.com/SystemsBioinformatics/parcr/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/SystemsBioinformatics/parcr/actions/workflows/R-CMD-check.yaml)
@@ -27,9 +29,14 @@ Hutton](https://orcid.org/0000-0001-9584-5150) (1992).
 
 ## Installation
 
-To install the package including its vignette run the following command
+Install the stable version from CRAN
 
-    install_github("https://github.com/SystemsBioinformatics/parcr/releases/latest", build_vignettes=TRUE)
+    install.packages("parcr")
+
+To install the development version including its vignette run the
+following command
+
+    install_github("SystemsBioinformatics/parcr", build_vignettes=TRUE)
 
 ## Example application: a parser for *fasta* sequence files
 

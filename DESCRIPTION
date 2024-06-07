@@ -1,6 +1,6 @@
 Package: parcr
 Title: Construct Parsers for Structured Text Files
-Version: 0.5.1
+Version: 0.5.2
 Authors@R: 
     person(given = "Douwe",
            family = "Molenaar",
@@ -23,9 +23,9 @@ LazyData: true
 URL: https://github.com/SystemsBioinformatics/parcr
 BugReports: https://github.com/SystemsBioinformatics/parcr/issues
 NeedsCompilation: no
-Packaged: 2024-01-31 12:53:06 UTC; douwe
+Packaged: 2024-06-07 06:43:08 UTC; douwe
 Author: Douwe Molenaar [aut, cre, cph]
     (<https://orcid.org/0000-0001-7108-4545>)
 Maintainer: Douwe Molenaar <d.molenaar@vu.nl>
 Repository: CRAN
-Date/Publication: 2024-01-31 13:10:02 UTC
+Date/Publication: 2024-06-07 07:10:02 UTC

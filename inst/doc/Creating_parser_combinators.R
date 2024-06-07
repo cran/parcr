@@ -90,6 +90,11 @@ Spacer()(c(" ","\t\t\t", "atgcc"))
 ## -----------------------------------------------------------------------------
 MaybeEmpty()(c("ggacc","gatccg", "atgcc"))
 
+## -----------------------------------------------------------------------------
+(literal("Interesting") %then% 
+  Ignore() %then% 
+  eof())(c("Interesting", LETTERS))
+
 ## ----echo=FALSE, comment = NA-------------------------------------------------
 data("fastafile")
 cat(paste0(fastafile, collapse="\n"))

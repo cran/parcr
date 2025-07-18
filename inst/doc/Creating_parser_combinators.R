@@ -100,7 +100,7 @@ data("fastafile")
 cat(paste0(fastafile, collapse="\n"))
 
 ## ----eval=FALSE---------------------------------------------------------------
-#  data("fastafile")
+# data("fastafile")
 
 ## -----------------------------------------------------------------------------
 Fasta <- function() {

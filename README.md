@@ -1,5 +1,6 @@
 
 <!-- README.md is generated from README.Rmd. Edit README.Rmd -->
+
 <!-- badges: start -->
 
 [![CRAN
@@ -22,7 +23,7 @@ creates R-objects as output. The `parcr` package simplifies the task of
 creating such parsers.
 
 This package was inspired by the package
-[“Ramble”](https://github.com/8bit-pixies/Ramble) by Chapman Siu and
+[“Ramble”](https://github.com/NoRaincheck/Ramble) by Chapman Siu and
 co-workers and by the paper [“Higher-order functions for
 parsing”](https://doi.org/10.1017/S0956796800000411) by [Graham
 Hutton](https://orcid.org/0000-0001-9584-5150) (1992).
@@ -130,67 +131,30 @@ explanation why this is useful or necessary even.
 
 Notice that the new parser functions that we define above are higher
 order functions taking no input, hence the empty argument brackets `()`
-behind their names. Now we need to define the line-parsers `Header()`,
-`NuclSequenceString()` and `ProtSequenceString()` that recognize and
-process the header line and single lines of nucleotide or protein
-sequences in the character vector `fastafile`. We use functions from
-`stringr` to do this in a few helper functions, and we use `match_s()`
-to to create `parcr` parsers from these.
+behind their names.
 
-``` r
-# returns the title after the ">" in the sequence header
-parse_header <- function(line) {
-  # Study stringr::str_match() to understand what we do here
-  m <- stringr::str_match(line, "^>(\\w+)")
-  if (is.na(m[1])) {
-    return(list()) # signal failure: no title found
-  } else {
-    return(m[2])
-  }
-}
-
-# returns a nucleotide sequence string
-parse_nucl_sequence_line <- function(line) {
-  # The line must consist of GATC from the start (^) until the end ($)
-  m <- stringr::str_match(line, "^([GATC]+)$")
-  if (is.na(m[1])) {
-    return(list()) # signal failure: not a valid nucleotide sequence string
-  } else {
-    return(m[2])
-  }
-}
-
-# returns a protein sequence string
-parse_prot_sequence_line <- function(line) {
-  # The line must consist of ARNDBCEQZGHILKMFPSTWYV from the start (^) until the
-  # end ($)
-  m <- stringr::str_match(line, "^([ARNDBCEQZGHILKMFPSTWYV]+)$")
-  if (is.na(m[1])) {
-    return(list()) # signal failure: not a valid protein sequence string
-  } else {
-    return(m[2])
-  }
-}
-```
-
-Then we define the line-parsers.
+Now we need to define the parsers `Header()`, `NuclSequenceString()` and
+`ProtSequenceString()` that actually recognize and process the header
+line string and strings of nucleotide or protein sequences in the
+character vector `fastafile`. We use the function constructor
+`stringparser()` from the package to construct helper functions that
+recognize and capture the desired matches, and we use `match_s()` to to
+create `parcr` compliant parsers from these.
 
 ``` r
 Header <- function() {
-  match_s(parse_header) %using% 
+  match_s(stringparser("^>(\\w+)")) %using% 
     function(x) list(title = unlist(x))
 }
 
 NuclSequenceString <- function() {
-  match_s(parse_nucl_sequence_line)
+  match_s(stringparser("^([GATC]+)$"))
 }
 
 ProtSequenceString <- function() {
-  match_s(parse_prot_sequence_line)
+  match_s(stringparser("^([ARNDBCEQZGHILKMFPSTWYV]+)$"))
 }
 ```
-
-where `match_s()` is also a parser defined in `parcr`.
 
 Now we have all the elements that we need to apply the `Fasta()` parser.
 

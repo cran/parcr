@@ -60,7 +60,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
 { counter-reset: source-line 0; }
@@ -394,7 +394,7 @@ can take functions as input and have functions as output. These are
 sometimes called combinators. The ideas behind the package are described
 in a paper by <span class="citation">Hutton (1992)</span>. A number of
 the functions described in this paper are implemented with modifications
-in the current package. The package was also heavily inspired by the <a href="https://github.com/8bit-pixies/Ramble"><code>Ramble</code></a>
+in the current package. The package was also heavily inspired by the <a href="https://github.com/NoRaincheck/Ramble"><code>Ramble</code></a>
 package which is written in the same vein, but without the explicit
 parsing of structured text files in mind.</p>
 <div id="the-output-of-the-parsers-a-list" class="section level3">

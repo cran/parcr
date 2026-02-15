@@ -27,28 +27,36 @@
 #' @inherit satisfy return
 #' @export
 #' @examples
-#' EmptyLine() (" \t  ") # success
-#' EmptyLine() ("    .") # failure
-#' EmptyLine() ("") # success
+#' EmptyLine()(" \t  ") # success
+#' EmptyLine()("    .") # failure
+#' EmptyLine()("") # success
 EmptyLine <- function() {
-  satisfy(function(x) {gsub("\\s+", "", x) == ""})
+  named(
+    satisfy(function(x) {
+      gsub("\\s+", "", x) == ""
+    }),
+    "Emptyline"
+  )
 }
 
 #' @rdname EmptyLine
 #' @export
 #' @examples
-#' Spacer() (c("   \t  ", "    ", "abc"))
-#' Spacer() (c("            ", "    ", "Important text"))
-#' Spacer() (c("Important text")) # failure, missing empty line
+#' Spacer()(c("   \t  ", "    ", "abc"))
+#' Spacer()(c("            ", "    ", "Important text"))
+#' Spacer()(c("Important text")) # failure, missing empty line
 Spacer <- function() {
-  one_or_more(EmptyLine()) %ret% NULL
+  named(
+    one_or_more(EmptyLine()) %ret% NULL,
+    "Spacer"
+  )
 }
 
 #' @rdname EmptyLine
 #' @export
 #' @examples
-#' MaybeEmpty() (c("            ", "    ", "Important text")) # success, just as Spacer()
-#' MaybeEmpty() (c("Important text")) # success, in contrast to Spacer()
+#' MaybeEmpty()(c("            ", "    ", "Important text")) # success, just as Spacer()
+#' MaybeEmpty()(c("Important text")) # success, in contrast to Spacer()
 MaybeEmpty <- function() {
   (zero_or_more(EmptyLine())) %ret% NULL
 }
@@ -71,14 +79,14 @@ MaybeEmpty <- function() {
 #' @export
 #' @examples
 #'
-#' starts_with_a <- function(x) grepl("^a",x)
+#' starts_with_a <- function(x) grepl("^a", x)
 #' p <- function() {
 #'   one_or_more(satisfy(starts_with_a)) %then%
-#'   (literal("~End") %ret% NULL) %then%
-#'   Ignore() %then%
-#'   eof()
+#'     (literal("~End") %ret% NULL) %then%
+#'     Ignore() %then%
+#'     eof()
 #' }
-#' p()(c("ab","abc","~End","boring stuff","more stuff"))
+#' p()(c("ab", "abc", "~End", "boring stuff", "more stuff"))
 Ignore <- function() {
   zero_or_more(satisfy(function(x) TRUE)) %ret% NULL
 }

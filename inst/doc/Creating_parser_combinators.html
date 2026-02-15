@@ -48,8 +48,9 @@ overflow: visible;
 }
 </style>
 <style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -60,7 +61,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
 { counter-reset: source-line 0; }
@@ -1288,68 +1289,128 @@ defined elements as</p>
 <span id="cb47-4"><a href="#cb47-4" tabindex="-1"></a>    <span class="fu">zero_or_one</span>(<span class="fu">Answer</span>()) <span class="sc">%using%</span></span>
 <span id="cb47-5"><a href="#cb47-5" tabindex="-1"></a>    <span class="cf">function</span>(x) <span class="fu">list</span>(x)</span>
 <span id="cb47-6"><a href="#cb47-6" tabindex="-1"></a>}</span></code></pre></div>
-<p>We can now parse the input. We wrap the <code>Template()</code>
-parser in the <code>reporter()</code> function to have proper error
-messaging and warnings, if applicable. Furthermore only the
-<code>L</code>-element, the parsed input, is returned.</p>
-<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" tabindex="-1"></a><span class="fu">reporter</span>(<span class="fu">Template</span>())(qtemp)</span>
-<span id="cb48-2"><a href="#cb48-2" tabindex="-1"></a><span class="co">#&gt; [[1]]</span></span>
-<span id="cb48-3"><a href="#cb48-3" tabindex="-1"></a><span class="co">#&gt; [[1]]$type</span></span>
-<span id="cb48-4"><a href="#cb48-4" tabindex="-1"></a><span class="co">#&gt; [1] &quot;intro&quot;</span></span>
-<span id="cb48-5"><a href="#cb48-5" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb48-6"><a href="#cb48-6" tabindex="-1"></a><span class="co">#&gt; [[1]]$content</span></span>
-<span id="cb48-7"><a href="#cb48-7" tabindex="-1"></a><span class="co">#&gt; [1] &quot;## Title about a set of questions\n\nThis is optional introductory text to a set of questions.\nTitles preceded by four hashes are not allowed in a question template.&quot;</span></span>
-<span id="cb48-8"><a href="#cb48-8" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb48-9"><a href="#cb48-9" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb48-10"><a href="#cb48-10" tabindex="-1"></a><span class="co">#&gt; [[2]]</span></span>
-<span id="cb48-11"><a href="#cb48-11" tabindex="-1"></a><span class="co">#&gt; [[2]][[1]]</span></span>
-<span id="cb48-12"><a href="#cb48-12" tabindex="-1"></a><span class="co">#&gt; [[2]][[1]]$type</span></span>
-<span id="cb48-13"><a href="#cb48-13" tabindex="-1"></a><span class="co">#&gt; [1] &quot;question&quot;</span></span>
-<span id="cb48-14"><a href="#cb48-14" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb48-15"><a href="#cb48-15" tabindex="-1"></a><span class="co">#&gt; [[2]][[1]]$content</span></span>
-<span id="cb48-16"><a href="#cb48-16" tabindex="-1"></a><span class="co">#&gt; [1] &quot;This is the first question&quot;</span></span>
-<span id="cb48-17"><a href="#cb48-17" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb48-18"><a href="#cb48-18" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb48-19"><a href="#cb48-19" tabindex="-1"></a><span class="co">#&gt; [[2]][[2]]</span></span>
-<span id="cb48-20"><a href="#cb48-20" tabindex="-1"></a><span class="co">#&gt; [[2]][[2]]$type</span></span>
-<span id="cb48-21"><a href="#cb48-21" tabindex="-1"></a><span class="co">#&gt; [1] &quot;tip&quot;</span></span>
-<span id="cb48-22"><a href="#cb48-22" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb48-23"><a href="#cb48-23" tabindex="-1"></a><span class="co">#&gt; [[2]][[2]]$content</span></span>
-<span id="cb48-24"><a href="#cb48-24" tabindex="-1"></a><span class="co">#&gt; [1] &quot;This would be a tip. tips are optional, and multiple tips can be given. Tips are\nwrapped in hide-reveal style html elements.&quot;</span></span>
-<span id="cb48-25"><a href="#cb48-25" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb48-26"><a href="#cb48-26" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb48-27"><a href="#cb48-27" tabindex="-1"></a><span class="co">#&gt; [[2]][[3]]</span></span>
-<span id="cb48-28"><a href="#cb48-28" tabindex="-1"></a><span class="co">#&gt; [[2]][[3]]$type</span></span>
-<span id="cb48-29"><a href="#cb48-29" tabindex="-1"></a><span class="co">#&gt; [1] &quot;tip&quot;</span></span>
-<span id="cb48-30"><a href="#cb48-30" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb48-31"><a href="#cb48-31" tabindex="-1"></a><span class="co">#&gt; [[2]][[3]]$content</span></span>
-<span id="cb48-32"><a href="#cb48-32" tabindex="-1"></a><span class="co">#&gt; [1] &quot;This would be a second tip.&quot;</span></span>
-<span id="cb48-33"><a href="#cb48-33" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb48-34"><a href="#cb48-34" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb48-35"><a href="#cb48-35" tabindex="-1"></a><span class="co">#&gt; [[2]][[4]]</span></span>
-<span id="cb48-36"><a href="#cb48-36" tabindex="-1"></a><span class="co">#&gt; [[2]][[4]]$type</span></span>
-<span id="cb48-37"><a href="#cb48-37" tabindex="-1"></a><span class="co">#&gt; [1] &quot;answer&quot;</span></span>
-<span id="cb48-38"><a href="#cb48-38" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb48-39"><a href="#cb48-39" tabindex="-1"></a><span class="co">#&gt; [[2]][[4]]$content</span></span>
-<span id="cb48-40"><a href="#cb48-40" tabindex="-1"></a><span class="co">#&gt; [1] &quot;The answer to the question is optional and is wrapped in a hide-reveal html element.&quot;</span></span>
-<span id="cb48-41"><a href="#cb48-41" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb48-42"><a href="#cb48-42" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb48-43"><a href="#cb48-43" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb48-44"><a href="#cb48-44" tabindex="-1"></a><span class="co">#&gt; [[3]]</span></span>
-<span id="cb48-45"><a href="#cb48-45" tabindex="-1"></a><span class="co">#&gt; [[3]][[1]]</span></span>
-<span id="cb48-46"><a href="#cb48-46" tabindex="-1"></a><span class="co">#&gt; [[3]][[1]]$type</span></span>
-<span id="cb48-47"><a href="#cb48-47" tabindex="-1"></a><span class="co">#&gt; [1] &quot;question&quot;</span></span>
-<span id="cb48-48"><a href="#cb48-48" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb48-49"><a href="#cb48-49" tabindex="-1"></a><span class="co">#&gt; [[3]][[1]]$content</span></span>
-<span id="cb48-50"><a href="#cb48-50" tabindex="-1"></a><span class="co">#&gt; [1] &quot;This is the second question. No tips for this one&quot;</span></span>
-<span id="cb48-51"><a href="#cb48-51" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb48-52"><a href="#cb48-52" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb48-53"><a href="#cb48-53" tabindex="-1"></a><span class="co">#&gt; [[3]][[2]]</span></span>
-<span id="cb48-54"><a href="#cb48-54" tabindex="-1"></a><span class="co">#&gt; [[3]][[2]]$type</span></span>
-<span id="cb48-55"><a href="#cb48-55" tabindex="-1"></a><span class="co">#&gt; [1] &quot;answer&quot;</span></span>
-<span id="cb48-56"><a href="#cb48-56" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb48-57"><a href="#cb48-57" tabindex="-1"></a><span class="co">#&gt; [[3]][[2]]$content</span></span>
-<span id="cb48-58"><a href="#cb48-58" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Answer to the second question&quot;</span></span></code></pre></div>
+</div>
+<div id="improved-error-messaging-since-v0.6" class="section level2">
+<h2>Improved error messaging (since v0.6)</h2>
+<p>Basic error messaging is implemented in the function
+<code>reporter()</code>. You can wrap a parser in the
+<code>reporter()</code> function to obtain an error message that reports
+the line of the input in which the parser ultimately failed as well as
+some lines around it to provide context. Here is an example:</p>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" tabindex="-1"></a>TenAs <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
+<span id="cb48-2"><a href="#cb48-2" tabindex="-1"></a>  <span class="fu">exactly</span>(<span class="dv">10</span>, <span class="fu">literal</span>(<span class="st">&quot;A&quot;</span>)) <span class="sc">%then%</span> <span class="fu">eof</span>()</span>
+<span id="cb48-3"><a href="#cb48-3" tabindex="-1"></a>}</span>
+<span id="cb48-4"><a href="#cb48-4" tabindex="-1"></a></span>
+<span id="cb48-5"><a href="#cb48-5" tabindex="-1"></a><span class="fu">TenAs</span>()(<span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">&quot;A&quot;</span>,<span class="dv">5</span>),<span class="st">&quot;B&quot;</span>,<span class="fu">rep</span>(<span class="st">&quot;A&quot;</span>,<span class="dv">3</span>)))</span>
+<span id="cb48-6"><a href="#cb48-6" tabindex="-1"></a><span class="co">#&gt; []</span></span></code></pre></div>
+<p>This output is not very useful for debugging, so we wrap the parser
+in the <code>reporter()</code> function and then apply it to the input
+(and, since we obtaina a system error we also wrap it in a
+<code>try()</code> statement):</p>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" tabindex="-1"></a><span class="fu">try</span>(<span class="fu">reporter</span>(<span class="fu">TenAs</span>())(<span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">&quot;A&quot;</span>,<span class="dv">5</span>),<span class="st">&quot;B&quot;</span>,<span class="fu">rep</span>(<span class="st">&quot;A&quot;</span>,<span class="dv">3</span>))))</span>
+<span id="cb49-2"><a href="#cb49-2" tabindex="-1"></a><span class="co">#&gt; Error : Parser failed on line 6 of input.</span></span>
+<span id="cb49-3"><a href="#cb49-3" tabindex="-1"></a><span class="co">#&gt;   4 |    A</span></span>
+<span id="cb49-4"><a href="#cb49-4" tabindex="-1"></a><span class="co">#&gt;   5 |    A</span></span>
+<span id="cb49-5"><a href="#cb49-5" tabindex="-1"></a><span class="co">#&gt;   6 | &gt;&gt; B</span></span>
+<span id="cb49-6"><a href="#cb49-6" tabindex="-1"></a><span class="co">#&gt;   7 |    A</span></span>
+<span id="cb49-7"><a href="#cb49-7" tabindex="-1"></a><span class="co">#&gt;   8 |    A</span></span></code></pre></div>
+<p>However, we might want to have more information on why there is an
+error on that line. Or, we would like the parser to report what it
+expected.</p>
+<div id="automatic-expected-values" class="section level3">
+<h3>Automatic Expected Values</h3>
+<p>A few basic parsers now automatically report such an expectation. The
+<code>literal()</code> parser knows exactly what it should get and
+therefore, by default reports ‘literal “[x]”’ where [x] is the literal
+value.</p>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" tabindex="-1"></a>parser <span class="ot">&lt;-</span> <span class="fu">literal</span>(<span class="st">&quot;START&quot;</span>) <span class="sc">%then%</span> <span class="fu">literal</span>(<span class="st">&quot;END&quot;</span>)</span>
+<span id="cb50-2"><a href="#cb50-2" tabindex="-1"></a><span class="fu">try</span>(<span class="fu">reporter</span>(parser)(<span class="fu">c</span>(<span class="st">&quot;BEGIN&quot;</span>,<span class="st">&quot;END&quot;</span>)))</span>
+<span id="cb50-3"><a href="#cb50-3" tabindex="-1"></a><span class="co">#&gt; Error : Parser failed on line 1 of input.</span></span>
+<span id="cb50-4"><a href="#cb50-4" tabindex="-1"></a><span class="co">#&gt; Expected: literal &#39;START&#39;</span></span>
+<span id="cb50-5"><a href="#cb50-5" tabindex="-1"></a><span class="co">#&gt;   1 | &gt;&gt; </span><span class="re">BEGIN</span></span>
+<span id="cb50-6"><a href="#cb50-6" tabindex="-1"></a><span class="co">#&gt;   2 |    </span><span class="re">END</span></span></code></pre></div>
+<p>Similarly, <code>eof()</code> expects an end of file signal and
+reports it if it was not encountered:</p>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" tabindex="-1"></a>parser <span class="ot">&lt;-</span> <span class="fu">literal</span>(<span class="st">&quot;data&quot;</span>) <span class="sc">%then%</span> <span class="fu">eof</span>()</span>
+<span id="cb51-2"><a href="#cb51-2" tabindex="-1"></a><span class="fu">try</span>(<span class="fu">reporter</span>(parser)(<span class="fu">c</span>(<span class="st">&quot;data&quot;</span>,<span class="st">&quot;more data&quot;</span>)))</span>
+<span id="cb51-3"><a href="#cb51-3" tabindex="-1"></a><span class="co">#&gt; Error : Parser failed on line 2 of input.</span></span>
+<span id="cb51-4"><a href="#cb51-4" tabindex="-1"></a><span class="co">#&gt; Expected: end of file</span></span>
+<span id="cb51-5"><a href="#cb51-5" tabindex="-1"></a><span class="co">#&gt;   1 |    data</span></span>
+<span id="cb51-6"><a href="#cb51-6" tabindex="-1"></a><span class="co">#&gt;   2 | &gt;&gt; more data</span></span></code></pre></div>
+</div>
+<div id="custom-expected-values-with-satisfy" class="section level3">
+<h3>Custom Expected Values with satisfy()</h3>
+<p>You can provide custom descriptions when using
+<code>satisfy()</code>:</p>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" tabindex="-1"></a>number <span class="ot">&lt;-</span> <span class="fu">satisfy</span>(<span class="cf">function</span>(x) <span class="fu">grepl</span>(<span class="st">&quot;^</span><span class="sc">\\</span><span class="st">d+$&quot;</span>, x), <span class="at">expected =</span> <span class="st">&quot;number&quot;</span>)</span>
+<span id="cb52-2"><a href="#cb52-2" tabindex="-1"></a><span class="fu">try</span>(<span class="fu">reporter</span>(number)(<span class="st">&quot;abc&quot;</span>))</span>
+<span id="cb52-3"><a href="#cb52-3" tabindex="-1"></a><span class="co">#&gt; Error : Parser failed on line 1 of input.</span></span>
+<span id="cb52-4"><a href="#cb52-4" tabindex="-1"></a><span class="co">#&gt; Expected: number</span></span>
+<span id="cb52-5"><a href="#cb52-5" tabindex="-1"></a><span class="co">#&gt;   1 | &gt;&gt; abc</span></span></code></pre></div>
+</div>
+<div id="semantic-names-with-named" class="section level3">
+<h3>Semantic Names with <code>named()</code></h3>
+<p>The <code>named()</code> function can be used to upgrade custom
+parser to one with an intelligible error message. Here is an example
+with the fasta file with a bad header.</p>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" tabindex="-1"></a>bad_header <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb53-2"><a href="#cb53-2" tabindex="-1"></a>  <span class="st">&quot;*sequence_A&quot;</span>,</span>
+<span id="cb53-3"><a href="#cb53-3" tabindex="-1"></a>  <span class="st">&quot;GGTAAGTCCTCTAGTACAAACACCCCCAAT&quot;</span>,</span>
+<span id="cb53-4"><a href="#cb53-4" tabindex="-1"></a>  <span class="st">&quot;&gt;sequence_B&quot;</span>,</span>
+<span id="cb53-5"><a href="#cb53-5" tabindex="-1"></a>  <span class="st">&quot;ATTGTGATATAATTAAAATTATATTCATAT&quot;</span></span>
+<span id="cb53-6"><a href="#cb53-6" tabindex="-1"></a>)</span></code></pre></div>
+<p>We upgrade the <code>Fasta()</code> parser to a named parser:</p>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" tabindex="-1"></a>Header <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
+<span id="cb54-2"><a href="#cb54-2" tabindex="-1"></a>  <span class="fu">named</span>(</span>
+<span id="cb54-3"><a href="#cb54-3" tabindex="-1"></a>    <span class="fu">match_s</span>(<span class="fu">stringparser</span>(<span class="st">&quot;^&gt;(</span><span class="sc">\\</span><span class="st">w+)&quot;</span>)) <span class="sc">%using%</span> </span>
+<span id="cb54-4"><a href="#cb54-4" tabindex="-1"></a>      <span class="cf">function</span>(x) <span class="fu">list</span>(<span class="at">title =</span> <span class="fu">unlist</span>(x)),</span>
+<span id="cb54-5"><a href="#cb54-5" tabindex="-1"></a>    <span class="st">&quot;FASTA header (&gt;sequence_name)&quot;</span></span>
+<span id="cb54-6"><a href="#cb54-6" tabindex="-1"></a>  )</span>
+<span id="cb54-7"><a href="#cb54-7" tabindex="-1"></a>}</span></code></pre></div>
+<p>where the first argument to the <code>named()</code> function is a
+parser body and the second argument is a brief description of the
+parser. Now, the reporter yields a more detailed message:</p>
+<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" tabindex="-1"></a><span class="fu">try</span>(<span class="fu">reporter</span>(<span class="fu">Fasta</span>())(bad_header))</span>
+<span id="cb55-2"><a href="#cb55-2" tabindex="-1"></a><span class="co">#&gt; Error : Parser failed on line 1 of input.</span></span>
+<span id="cb55-3"><a href="#cb55-3" tabindex="-1"></a><span class="co">#&gt; Expected: FASTA header (&gt;sequence_name)</span></span>
+<span id="cb55-4"><a href="#cb55-4" tabindex="-1"></a><span class="co">#&gt;   1 | &gt;&gt; *sequence_A</span></span>
+<span id="cb55-5"><a href="#cb55-5" tabindex="-1"></a><span class="co">#&gt;   2 |    GGTAAGTCCTCTAGTACAAACACCCCCAAT</span></span>
+<span id="cb55-6"><a href="#cb55-6" tabindex="-1"></a><span class="co">#&gt;   3 |    &gt;sequence_B</span></span>
+<span id="cb55-7"><a href="#cb55-7" tabindex="-1"></a><span class="co">#&gt;   4 |    ATTGTGATATAATTAAAATTATATTCATAT</span></span></code></pre></div>
+<p>When using <code>%or%</code>, the error message shows all valid
+alternatives. Here we demonstrate this with the
+<code>SequenceBlock()</code> parser which contains the expression
+<code>NuclSequence() %or% ProtSequence()</code>. We upgrade both
+alternative parsers:</p>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" tabindex="-1"></a>NuclSequence <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
+<span id="cb56-2"><a href="#cb56-2" tabindex="-1"></a>  <span class="fu">named</span>(</span>
+<span id="cb56-3"><a href="#cb56-3" tabindex="-1"></a>    <span class="fu">one_or_more</span>(<span class="fu">NuclSequenceString</span>()) <span class="sc">%using%</span> </span>
+<span id="cb56-4"><a href="#cb56-4" tabindex="-1"></a>      <span class="cf">function</span>(x) <span class="fu">list</span>(<span class="at">type =</span> <span class="st">&quot;Nucl&quot;</span>, <span class="at">sequence =</span> <span class="fu">paste0</span>(x, <span class="at">collapse=</span><span class="st">&quot;&quot;</span>)),</span>
+<span id="cb56-5"><a href="#cb56-5" tabindex="-1"></a>    <span class="st">&quot;Nucleotide sequence&quot;</span></span>
+<span id="cb56-6"><a href="#cb56-6" tabindex="-1"></a>  )</span>
+<span id="cb56-7"><a href="#cb56-7" tabindex="-1"></a>}</span>
+<span id="cb56-8"><a href="#cb56-8" tabindex="-1"></a></span>
+<span id="cb56-9"><a href="#cb56-9" tabindex="-1"></a>ProtSequence <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
+<span id="cb56-10"><a href="#cb56-10" tabindex="-1"></a>  <span class="fu">named</span>(</span>
+<span id="cb56-11"><a href="#cb56-11" tabindex="-1"></a>    <span class="fu">one_or_more</span>(<span class="fu">ProtSequenceString</span>()) <span class="sc">%using%</span> </span>
+<span id="cb56-12"><a href="#cb56-12" tabindex="-1"></a>      <span class="cf">function</span>(x) <span class="fu">list</span>(<span class="at">type =</span> <span class="st">&quot;Prot&quot;</span>, <span class="at">sequence =</span> <span class="fu">paste0</span>(x, <span class="at">collapse=</span><span class="st">&quot;&quot;</span>)),</span>
+<span id="cb56-13"><a href="#cb56-13" tabindex="-1"></a>    <span class="st">&quot;Protein sequence&quot;</span></span>
+<span id="cb56-14"><a href="#cb56-14" tabindex="-1"></a>  )</span>
+<span id="cb56-15"><a href="#cb56-15" tabindex="-1"></a>}</span>
+<span id="cb56-16"><a href="#cb56-16" tabindex="-1"></a></span>
+<span id="cb56-17"><a href="#cb56-17" tabindex="-1"></a>missing_sequence <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb56-18"><a href="#cb56-18" tabindex="-1"></a>  <span class="st">&quot;&gt;sequence_A&quot;</span>,</span>
+<span id="cb56-19"><a href="#cb56-19" tabindex="-1"></a>  <span class="st">&quot;&gt;sequence_B&quot;</span>,</span>
+<span id="cb56-20"><a href="#cb56-20" tabindex="-1"></a>  <span class="st">&quot;ATTGTGATATAATTAAAATTATATTCATAT&quot;</span></span>
+<span id="cb56-21"><a href="#cb56-21" tabindex="-1"></a>)</span>
+<span id="cb56-22"><a href="#cb56-22" tabindex="-1"></a></span>
+<span id="cb56-23"><a href="#cb56-23" tabindex="-1"></a><span class="fu">try</span>(<span class="fu">reporter</span>(<span class="fu">Fasta</span>())(missing_sequence))</span>
+<span id="cb56-24"><a href="#cb56-24" tabindex="-1"></a><span class="co">#&gt; Error : Parser failed on line 2 of input.</span></span>
+<span id="cb56-25"><a href="#cb56-25" tabindex="-1"></a><span class="co">#&gt; Expected one of: Nucleotide sequence, Protein sequence</span></span>
+<span id="cb56-26"><a href="#cb56-26" tabindex="-1"></a><span class="co">#&gt;   1 |    &gt;sequence_A</span></span>
+<span id="cb56-27"><a href="#cb56-27" tabindex="-1"></a><span class="co">#&gt;   2 | &gt;&gt; &gt;sequence_B</span></span>
+<span id="cb56-28"><a href="#cb56-28" tabindex="-1"></a><span class="co">#&gt;   3 |    ATTGTGATATAATTAAAATTATATTCATAT</span></span></code></pre></div>
+</div>
 </div>
 <div id="literature" class="section level2 unnumbered">
 <h2 class="unnumbered">Literature</h2>

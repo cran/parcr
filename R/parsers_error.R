@@ -5,6 +5,8 @@
 #' successfully parsed part of the input (see [succeed()]).
 #'
 #' @param p a parser.
+#' @param context_size number of lines of context to show around the line where
+#' failure occurred. Default is 5.
 #'
 #' @return The `L`-part of a successful parser result or an error message about
 #'         the line where the parser failed. A warning is thrown when the parser
@@ -27,19 +29,19 @@
 #'
 #' @examples
 #' at <- function() literal("a") %then% literal("t")
-#' atat <- rep(c("a","t"),2)
+#' atat <- rep(c("a", "t"), 2)
 #' # Yields an error message about parser failing on line 5
 #' try(
-#'   reporter(match_n(3,at()) %then% eof())(c(atat,"t","t"))
+#'   reporter(match_n(3, at()) %then% eof())(c(atat, "t", "t"))
 #' )
 #' # No error, but parser result
-#' reporter(match_n(2,at()) %then% eof())(atat)
+#' reporter(match_n(2, at()) %then% eof())(atat)
 #' # warning: the input is not completely consumed
 #' try(
-#'   reporter(match_n(2,at()))(atat)
+#'   reporter(match_n(2, at()))(atat)
 #' )
 #'
-reporter <- function(p) {
+reporter <- function(p, context_size = 5) {
   reset_LNR()
   function(x) {
     r <- p(x)
@@ -48,7 +50,9 @@ reporter <- function(p) {
         warning("The parser did not completely consume the input. Consider using eof().", call. = FALSE)
       }
       r$L
-    } else parser_error(nr=marker_val(r), content=x[marker_val(r)])
+    } else {
+      parser_error(content = x, marker = r, context_size = context_size)
+    }
   }
 }
 
@@ -76,10 +80,122 @@ stop_custom <- function(.subclass, message, call = NULL, ...) {
 #'
 #' @return A condition object
 #' @noRd
-parser_error <- function(nr, content) {
-  message = paste0("Parser failed on line ", nr, " of input.\nLine content: \"",content,"\"")
-  stop_custom (.subclass = "error_parser",
-               message = message,
-               linenr = nr,
-               linecontent = content)
+parser_error <- function(content, marker, context_size) {
+  nr <- marker_val(marker)
+  expected <- marker_expected(marker)
+  context <- parser_error_context(nr, content, max_lines = context_size)
+
+  # Build expected message
+  expected_msg <- if (!is.null(expected) && length(expected) > 0) {
+    if (length(expected) == 1) {
+      paste0("\nExpected: ", expected)
+    } else {
+      paste0("\nExpected one of: ", paste(expected, collapse = ", "))
+    }
+  } else {
+    ""
+  }
+
+  message <- paste0(
+    "Parser failed on line ", nr, " of input.",
+    expected_msg, "\n",
+    paste(
+      sprintf(
+        "%3d | %s%s", context$linenrs,
+        ifelse(seq_along(context$context) == context$failed_line,
+          ">> ", "   "
+        ),
+        context$context
+      ),
+      collapse = "\n"
+    )
+  )
+  stop_custom(
+    .subclass = "error_parser",
+    message = message,
+    linenr = nr,
+    linecontent = context$context[context$failed_line],
+    expected = expected
+  )
+}
+
+#' Create a context of the line where the parser failed
+#'
+#' @param nr the line number on which the error occurred
+#' @param x the input of te parser
+#' @param max_lines the maximal number of lines to display
+#'
+#' If possible, line number nr will be at the center
+#'
+#' @return A list with elements `linenr` and `linecontent`.
+#' @noRd
+parser_error_context <- function(nr, x, max_lines) {
+  if (length(x) <= max_lines) {
+    start_line <- 1
+    end_line <- length(x)
+  } else {
+    before <- floor(max_lines/2)
+    after <- max_lines - before - 1
+    if ((nr - before) < 1) {
+      dif <- before - nr + 1
+      after <- after + dif
+    } else {
+      if ((nr + after > length(x))) {
+        dif <- nr + after - length(x)
+        before <- before + dif
+        after <- after - dif
+      }
+    }
+    start_line <- nr - before
+    end_line <- nr + after
+  }
+  list(
+    linenrs = seq(start_line, end_line),
+    context = x[start_line:end_line],
+    failed_line = nr - start_line + 1
+  )
+}
+
+
+#' Add a semantic name to a parser for better error messages
+#'
+#' @description
+#' `named()` wraps a parser and provides a meaningful name that will be shown
+#' in error messages when the parser fails. This is particularly useful for
+#' user-defined parsers to make error messages more informative.
+#'
+#' @param p a parser.
+#' @param name a character string describing what the parser expects.
+#'
+#' @inherit satisfy return
+#' @export
+#' @examples
+#' # Define a parser with a semantic name
+#' Nucleotide <- function() {
+#'   named(
+#'     satisfy(function(x) grepl("^[GATC]+$", x)),
+#'     "nucleotide sequence"
+#'   )
+#' }
+#'
+#' # When this parser fails, the error will say "Expected: nucleotide sequence"
+#' try(reporter(Nucleotide() %then% eof())(c("GATCxTC")))
+#'
+#' # Combine named parsers with %or% to get helpful "Expected one of:" messages
+#' Nucleotide_or_Protein <- function() {
+#'   named(satisfy(function(x) grepl("^[GATC]+$", x)), "nucleotide") %or%
+#'     named(satisfy(function(x) grepl("^[ARNDCQEGHILKMFPSTWYV]+$", x)), "protein")
+#' }
+#'
+#' try(reporter(Nucleotide_or_Protein() %then% eof())(c("Some text")))
+#'
+named <- function(p, name) {
+  function(x) {
+    r <- p(x)
+    if (failed(r)) {
+      fail(lnr = marker_val(r), expected = name)(x)
+    } else {
+      r
+    }
+  }
 }

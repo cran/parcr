@@ -1,6 +1,6 @@
 Package: parcr
 Title: Construct Parsers for Structured Text Files
-Version: 0.5.3
+Version: 0.6.0
 Authors@R: 
     person(given = "Douwe",
            family = "Molenaar",
@@ -14,7 +14,7 @@ Description: Construct parser combinator functions, higher order functions that
   <doi:10.1017/S0956796800000411>. 
 License: MIT + file LICENSE
 Encoding: UTF-8
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Suggests: knitr, rmarkdown, stringr, testthat (>= 3.0.0)
 Config/testthat/edition: 3
 VignetteBuilder: knitr
@@ -23,9 +23,9 @@ LazyData: true
 URL: https://github.com/SystemsBioinformatics/parcr
 BugReports: https://github.com/SystemsBioinformatics/parcr/issues
 NeedsCompilation: no
-Packaged: 2025-07-18 08:50:35 UTC; douwe
+Packaged: 2026-02-15 14:08:00 UTC; douwe
 Author: Douwe Molenaar [aut, cre, cph] (ORCID:
     <https://orcid.org/0000-0001-7108-4545>)
 Maintainer: Douwe Molenaar <d.molenaar@vu.nl>
 Repository: CRAN
-Date/Publication: 2025-07-18 09:10:03 UTC
+Date/Publication: 2026-02-15 14:50:02 UTC

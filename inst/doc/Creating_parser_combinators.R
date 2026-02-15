@@ -301,5 +301,70 @@ QuestionBlock <- function() {
 }
 
 ## -----------------------------------------------------------------------------
-reporter(Template())(qtemp)
+TenAs <- function() {
+  exactly(10, literal("A")) %then% eof()
+}
+
+TenAs()(c(rep("A",5),"B",rep("A",3)))
+
+## -----------------------------------------------------------------------------
+try(reporter(TenAs())(c(rep("A",5),"B",rep("A",3))))
+
+## -----------------------------------------------------------------------------
+parser <- literal("START") %then% literal("END")
+try(reporter(parser)(c("BEGIN","END")))
+
+## -----------------------------------------------------------------------------
+parser <- literal("data") %then% eof()
+try(reporter(parser)(c("data","more data")))
+
+## -----------------------------------------------------------------------------
+number <- satisfy(function(x) grepl("^\\d+$", x), expected = "number")
+try(reporter(number)("abc"))
+
+## -----------------------------------------------------------------------------
+bad_header <- c(
+  "*sequence_A",
+  "GGTAAGTCCTCTAGTACAAACACCCCCAAT",
+  ">sequence_B",
+  "ATTGTGATATAATTAAAATTATATTCATAT"
+)
+
+## -----------------------------------------------------------------------------
+Header <- function() {
+  named(
+    match_s(stringparser("^>(\\w+)")) %using% 
+      function(x) list(title = unlist(x)),
+    "FASTA header (>sequence_name)"
+  )
+}
+
+## -----------------------------------------------------------------------------
+try(reporter(Fasta())(bad_header))
+
+## -----------------------------------------------------------------------------
+NuclSequence <- function() {
+  named(
+    one_or_more(NuclSequenceString()) %using% 
+      function(x) list(type = "Nucl", sequence = paste0(x, collapse="")),
+    "Nucleotide sequence"
+  )
+}
+
+ProtSequence <- function() {
+  named(
+    one_or_more(ProtSequenceString()) %using% 
+      function(x) list(type = "Prot", sequence = paste0(x, collapse="")),
+    "Protein sequence"
+  )
+}
+
+missing_sequence <- c(
+  ">sequence_A",
+  ">sequence_B",
+  "ATTGTGATATAATTAAAATTATATTCATAT"
+)
+
+try(reporter(Fasta())(missing_sequence))
+
 
